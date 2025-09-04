@@ -101,7 +101,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         btnSuaDG = new javax.swing.JButton();
         btnLamMoiDG = new javax.swing.JButton();
 
-        tblDonHang.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        tblDonHang.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         tblDonHang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -120,21 +120,22 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("QUẢN LÝ ĐƠN GIẶT ỦI");
 
-        jLabel2.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel2.setText("Khách Hàng");
 
-        txtKhanhHang.setFont(new java.awt.Font("Sitka Heading", 0, 18)); // NOI18N
+        txtKhanhHang.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
-        jLabel3.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel3.setText("Ngày Nhận");
 
-        jLabel4.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Ngày Trả");
 
-        cboMaDichVu.setFont(new java.awt.Font("Sitka Heading", 0, 18)); // NOI18N
+        cboMaDichVu.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         cboMaDichVu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel6.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel6.setText("Trạng Thái");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -164,21 +165,21 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
                     .addComponent(txtKhanhHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3)
-                    .addComponent(txtNgayNhan, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtNgayNhan, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtNgayTra, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboMaDichVu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cboMaDichVu, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
 
-        btnThemDG.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnThemDG.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnThemDG.setText("Thêm");
         btnThemDG.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -186,7 +187,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
             }
         });
 
-        btnXoaDG.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnXoaDG.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnXoaDG.setText("Xóa");
         btnXoaDG.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -194,7 +195,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
             }
         });
 
-        btnSuaDG.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnSuaDG.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnSuaDG.setText("Sửa");
         btnSuaDG.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -202,7 +203,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
             }
         });
 
-        btnLamMoiDG.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnLamMoiDG.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnLamMoiDG.setText("Làm Mới");
         btnLamMoiDG.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -214,28 +215,27 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(btnXoaDG, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnThemDG, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-                        .addComponent(btnSuaDG, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(btnLamMoiDG, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(9, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(9, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(btnSuaDG, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnThemDG, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnXoaDG, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnLamMoiDG, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
+                .addGap(9, 9, 9))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnThemDG)
+                .addComponent(btnThemDG, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(btnSuaDG)
+                .addComponent(btnSuaDG, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnXoaDG)
+                .addComponent(btnXoaDG, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnLamMoiDG)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addComponent(btnLamMoiDG, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -262,12 +262,12 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

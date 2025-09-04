@@ -58,28 +58,28 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("TÌM KIẾM ĐƠN HÀNG");
 
-        jLabel2.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel2.setText("Mã Hóa Đơn");
 
         txtHoaDon.setFont(new java.awt.Font("Sitka Heading", 0, 18)); // NOI18N
 
-        jLabel3.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel3.setText("SĐT");
 
         txtSDT.setFont(new java.awt.Font("Sitka Heading", 0, 18)); // NOI18N
 
-        jLabel4.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel4.setText("Tên KH");
 
         txtKhanhHang.setFont(new java.awt.Font("Sitka Heading", 0, 18)); // NOI18N
 
-        jLabel5.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel5.setText("Trạng Thái");
 
         cboTrangThai.setFont(new java.awt.Font("Sitka Heading", 0, 18)); // NOI18N
         cboTrangThai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        btnTimKiem.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnTimKiem.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnTimKiem.setText("Tìm Kiếm");
         btnTimKiem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -87,7 +87,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
             }
         });
 
-        btnLamMoi.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnLamMoi.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnLamMoi.setText("Làm Mới");
         btnLamMoi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -142,7 +142,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel2)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(9, 9, 9)
+                                        .addGap(18, 18, 18)
                                         .addComponent(jLabel3)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -205,7 +205,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 private void loadData(String where) {

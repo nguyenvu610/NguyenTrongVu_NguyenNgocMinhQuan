@@ -80,7 +80,7 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("QUẢN LÝ KHÁNH HÀNG");
 
-        btnXoa.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnXoa.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnXoa.setText("Xóa");
         btnXoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -88,7 +88,7 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
             }
         });
 
-        btnThem.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnThem.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnThem.setText("Thêm");
         btnThem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,7 +96,7 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
             }
         });
 
-        btnSua.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnSua.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnSua.setText("Sửa");
         btnSua.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -104,7 +104,7 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
             }
         });
 
-        btnLamMoi.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        btnLamMoi.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         btnLamMoi.setText("Làm Mới");
         btnLamMoi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -139,23 +139,23 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jLabel82.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel82.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel82.setText("Họ Tên");
 
-        jLabel83.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel83.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel83.setText("SĐT");
 
-        jLabel84.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
+        jLabel84.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel84.setText("Địa Chỉ");
 
-        txtHoTen.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        txtHoTen.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         txtHoTen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtHoTenActionPerformed(evt);
             }
         });
 
-        txtSDT.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        txtSDT.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         txtSDT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtSDTActionPerformed(evt);
@@ -163,7 +163,7 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
         });
 
         txtDiaChi.setColumns(20);
-        txtDiaChi.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        txtDiaChi.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         txtDiaChi.setRows(5);
         jScrollPane3.setViewportView(txtDiaChi);
 
@@ -179,16 +179,16 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
             jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel22Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel22Layout.createSequentialGroup()
                         .addComponent(jLabel84)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel22Layout.createSequentialGroup()
                         .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel83)
-                            .addComponent(jLabel82))
-                        .addGap(12, 12, 12)
+                            .addComponent(jLabel82)
+                            .addComponent(jLabel83))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE))))
