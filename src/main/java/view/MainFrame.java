@@ -14,89 +14,73 @@ public class MainFrame extends JFrame {
     private JPanel mainPanel;
 
     public MainFrame() {
-        setTitle("Quản Lý Thư Viện");
+        setTitle("Quản Lý Tiệm Giặt Ủi");
         setSize(900, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Tạo menu bar
+        setLayout(new BorderLayout());
+
         JMenuBar menuBar = new JMenuBar();
 
-       // Menu Độc giả
-        JMenu menuDocGia = new JMenu("Độc giả");
-        JMenuItem qlDocGia = new JMenuItem("Quản lý độc giả");
+        // Quản lý Menu
+        JMenu menuQuanLyMenu = new JMenu("Quản Lý Menu");
+        JMenuItem tkKhanhHang = new JMenuItem("Quản Lý Khách Hàng");
+        JMenuItem tkDichVu = new JMenuItem("Quản Lý Dịch Vụ");
 
-       // Menu Sách
-        JMenu menuSach = new JMenu("Sách");
-        JMenuItem qlSach = new JMenuItem("Quản lý sách");
+        // Đơn Giặt Ủi
+        JMenu menuDonGiat = new JMenu("Đơn Giặt Ủi");
+        JMenuItem qlDonGiat = new JMenuItem("Quản Lý Đơn Giặt");
 
-        // Menu Mượn trả
-        JMenu menuMuonTra = new JMenu("Mượn trả");
-        JMenuItem qlPhieuMuon = new JMenuItem("Quản lý phiếu mượn");
+        // Quản lý Đơn Hàng 
+        JMenu menuQuanLyDonHang = new JMenu("Quản Lý Đơn Hàng");
+        JMenuItem tkThanhToan = new JMenuItem("Hóa Đơn Giặt Ủi");
+        JMenuItem tkTimKiem = new JMenuItem("Tìm Kiếm Đơn Hàng");
 
-        // Menu Thống kê
-        JMenu menuThongKe = new JMenu("Thống kê");
-        JMenuItem tkSachDangMuon = new JMenuItem("Sách đang mượn");
-        JMenuItem tkDocGiaNhieu = new JMenuItem("Độc giả mượn nhiều sách");
-        JMenuItem tkSachQuaHan = new JMenuItem("Sách quá hạn");
+        // Thống kê - Báo cáo
+        JMenu menuThongKe = new JMenu("Thống Kê - Báo Cáo");
+        JMenuItem tkTongHop = new JMenuItem("Thống Kê Tổng Hợp");
 
-       // Gắn item vào menu
-        menuDocGia.add(qlDocGia);
-        menuSach.add(qlSach);
-        menuMuonTra.add(qlPhieuMuon);
-        menuThongKe.add(tkSachDangMuon);
-        menuThongKe.add(tkDocGiaNhieu);
-        menuThongKe.add(tkSachQuaHan);
+        // Gắn item vào menu
+        menuQuanLyMenu.add(tkKhanhHang);
+        menuQuanLyMenu.add(tkDichVu);
+        menuDonGiat.add(qlDonGiat);
+        menuQuanLyDonHang.add(tkThanhToan);
+        menuQuanLyDonHang.add(tkTimKiem);
+        menuThongKe.add(tkTongHop);
 
-// Gắn menu vào menu bar
-        menuBar.add(menuDocGia);
-        menuBar.add(menuSach);
-        menuBar.add(menuMuonTra);
+        // Thêm tất cả menu vào MenuBar
+        menuBar.add(menuQuanLyMenu);
+        menuBar.add(menuDonGiat);
+        menuBar.add(menuQuanLyDonHang);
         menuBar.add(menuThongKe);
-        setJMenuBar(menuBar);
-        
-//        JToolBar toolBar = new JToolBar();
-//        JButton btQL_DocGia = new JButton("Quản lý độc giả");
-//        JButton btQL_Sach = new JButton("Quản lý sách");
-//        toolBar.add(btQL_DocGia);
-//        toolBar.add(btQL_Sach);
-//        
-//        add(toolBar, BorderLayout.NORTH);
-        
-        
 
-      // Panel chính dùng CardLayout
+        setJMenuBar(menuBar);
+
+        // Panel chính dùng CardLayout
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-     // Thêm các panel chức năng
-        mainPanel.add(new QuanLyDocGiaPanel(), "QL_DOCGIA");
-        mainPanel.add(new QuanLySachPanel(), "QL_SACH");
-//        mainPanel.add(new QuanLyPhieuMuonPanel(), "QL_PHIEUMUON");
-//        mainPanel.add(new ThongKeSachDangMuonPanel(), "TK_DANGMUON");
-//        mainPanel.add(new ThongKeDocGiaNhieuPanel(), "TK_DOCGIA");
-//        mainPanel.add(new ThongKeSachQuaHanPanel(), "TK_QUAHAN");
+        // Thêm các panel chức năng (bạn mở comment nếu panel đã tạo)
+        mainPanel.add(new QuanLyKhachHangPanel(), "QL_KHANHHANG");
+        mainPanel.add(new QuanLyDichVuPanel(), "QL_DICHVU");
+        mainPanel.add(new QuanLyDonGiatPanel(), "QL_DONGIATUI");
+        mainPanel.add(new QuanLyHoaDonPanel(), "QL_HOADON");
+        mainPanel.add(new TimKiemDonHangPanel(), "QL_TIMKIEM");    
+        mainPanel.add(new ThongKeVaBaoCaoPanel(), "QL_THONGKE");
 
-        add(mainPanel,BorderLayout.CENTER);
+        add(mainPanel, BorderLayout.CENTER);
 
-       // Xử lý sự kiện menu
-        qlDocGia.addActionListener(e -> cardLayout.show(mainPanel, "QL_DOCGIA"));
-        qlSach.addActionListener(e -> cardLayout.show(mainPanel, "QL_SACH"));
-        qlPhieuMuon.addActionListener(e -> cardLayout.show(mainPanel, "QL_PHIEUMUON"));
-        tkSachDangMuon.addActionListener(e -> cardLayout.show(mainPanel, "TK_DANGMUON"));
-        tkDocGiaNhieu.addActionListener(e -> cardLayout.show(mainPanel, "TK_DOCGIA"));
-        tkSachQuaHan.addActionListener(e -> cardLayout.show(mainPanel, "TK_QUAHAN"));
-        
-        //// Xử lý sự kiện Toolbar
-//        btQL_DocGia.addActionListener(e->cardLayout.show(mainPanel, "QL_DOCGIA"));
-//        
-//        btQL_Sach.addActionListener(e-> cardLayout.show(mainPanel, "QL_SACH"));
-        
-        //show Panel mac dinh
-    //    cardLayout.show(mainPanel, "QL_SACH");    
-    
+        // Xử lý sự kiện menu
+        tkKhanhHang.addActionListener(e -> cardLayout.show(mainPanel, "QL_KHANHHANG"));
+        tkDichVu.addActionListener(e -> cardLayout.show(mainPanel, "QL_DICHVU"));
+        qlDonGiat.addActionListener(e -> cardLayout.show(mainPanel, "QL_DONGIATUI"));
+        tkThanhToan.addActionListener(e -> cardLayout.show(mainPanel, "QL_HOADON"));
+        tkTimKiem.addActionListener(e -> cardLayout.show(mainPanel, "QL_TIMKIEM"));
+        tkTongHop.addActionListener(e -> cardLayout.show(mainPanel, "QL_THONGKE"));
     }
 
+    // Hàm main để chạy chương trình
     public static void main(String[] args) {
         new MainFrame().setVisible(true);
     }
