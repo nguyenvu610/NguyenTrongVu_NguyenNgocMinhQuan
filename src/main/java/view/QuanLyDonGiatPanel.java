@@ -4,6 +4,10 @@
  */
 package view;
 
+import model.DichVuGiat;
+import model.DichVuGiatDAO;
+import java.util.List;
+
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,6 +21,7 @@ import util.DBConnection;
  */
 public class QuanLyDonGiatPanel extends javax.swing.JPanel {
 
+    private DichVuGiatDAO dichVuDAO = new DichVuGiatDAO();
     private DefaultTableModel model;
     private Connection conn;
 
@@ -27,9 +32,18 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         initComponents();
         conn = DBConnection.getConnection();
         model = (DefaultTableModel) tblDonHang.getModel();
-        model.setColumnIdentifiers(new String[]{"Khách Hàng", "Ngày Nhận", "Ngày Trả", "Trạng Thái"});
+        model.setColumnIdentifiers(new String[]{"Khách Hàng", "Ngày Nhận", "Ngày Trả", "Dịch Vụ"});
+        loadComboBoxDichVu();
         loadData();
         addTableClickEvent();
+    }
+
+    private void loadComboBoxDichVu() {
+        cboMaDichVu.removeAllItems();
+        List<DichVuGiat> list = dichVuDAO.getAll();
+        for (DichVuGiat dv : list) {
+            cboMaDichVu.addItem(dv.toString());
+        }
     }
 
     private void loadData() {
@@ -151,8 +165,8 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
                     .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cboMaDichVu, 0, 386, Short.MAX_VALUE)
-                    .addComponent(txtNgayTra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cboMaDichVu, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtNgayTra, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
                     .addComponent(txtNgayNhan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtKhanhHang))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -272,27 +286,33 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnThemDGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemDGActionPerformed
-        String khachHang = txtKhanhHang.getText();
+        String khachHang = txtKhanhHang.getText().trim();
         Date ngayNhan = txtNgayNhan.getDate();
         Date ngayTra = txtNgayTra.getDate();
-        String trangThai = cboMaDichVu.getSelectedItem().toString();
+        String dichVu = cboMaDichVu.getSelectedItem().toString();
 
-        // Kiểm tra dữ liệu
         if (khachHang.isEmpty() || ngayNhan == null || ngayTra == null) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
             return;
         }
 
-        // Chuyển ngày sang dạng String
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String strNgayNhan = sdf.format(ngayNhan);
-        String strNgayTra = sdf.format(ngayTra);
+        try {
+            String sql = "INSERT INTO DonGiat(KhachHang, NgayNhan, NgayTra, TrangThai) VALUES (?,?,?,?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, khachHang);
+            ps.setDate(2, new java.sql.Date(ngayNhan.getTime()));
+            ps.setDate(3, new java.sql.Date(ngayTra.getTime()));
+            ps.setString(4, dichVu); // ở đây bạn nên đổi tên cột thành DichVu cho rõ
 
-        // Thêm vào bảng
-        model.addRow(new Object[]{khachHang, strNgayNhan, strNgayTra, trangThai});
-
-        JOptionPane.showMessageDialog(this, "Thêm đơn giặt thành công!");
-        lamMoiForm();
+            int result = ps.executeUpdate();
+            if (result > 0) {
+                JOptionPane.showMessageDialog(this, "Thêm đơn giặt thành công!");
+                loadData();
+                lamMoiForm();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi thêm: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnThemDGActionPerformed
 
     private void btnXoaDGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaDGActionPerformed
@@ -303,9 +323,22 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         }
 
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            model.removeRow(selectedRow);
-            JOptionPane.showMessageDialog(this, "Xóa thành công!");
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
+            int maDon = (int) tblDonHang.getValueAt(selectedRow, 0); // cần cột MaDon trong table model
+            String sql = "DELETE FROM DonGiat WHERE MaDon=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, maDon);
+            if (ps.executeUpdate() > 0) {
+                JOptionPane.showMessageDialog(this, "Xóa thành công!");
+                loadData();
+                lamMoiForm();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi xóa: " + e.getMessage());
         }
     }//GEN-LAST:event_btnXoaDGActionPerformed
 

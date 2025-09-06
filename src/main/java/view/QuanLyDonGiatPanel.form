@@ -133,8 +133,8 @@
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="cboMaDichVu" pref="386" max="32767" attributes="0"/>
-                      <Component id="txtNgayTra" alignment="0" max="32767" attributes="0"/>
+                      <Component id="cboMaDichVu" max="32767" attributes="0"/>
+                      <Component id="txtNgayTra" alignment="0" pref="386" max="32767" attributes="0"/>
                       <Component id="txtNgayNhan" alignment="0" max="32767" attributes="0"/>
                       <Component id="txtKhanhHang" alignment="0" max="32767" attributes="0"/>
                   </Group>
