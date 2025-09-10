@@ -15,70 +15,53 @@ import java.util.List;
  */
 public class DonGiatDAO {
 
-    // Lấy toàn bộ đơn giặt
+    // Lấy tất cả đơn giặt
     public List<DonGiat> getAll() {
         List<DonGiat> list = new ArrayList<>();
-        String sql = "SELECT MaDon, MaKhachHang, NgayNhan, NgayTra, TrangThai, DaThanhToan, TongTien FROM DonGiat";
+        String sql = "SELECT * FROM DonGiat";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
-                list.add(new DonGiat(
+                DonGiat dg = new DonGiat(
                         rs.getInt("MaDon"),
-                        rs.getInt("MaKhachHang"),
+                        rs.getString("TenKhachHang"),
                         rs.getDate("NgayNhan"),
                         rs.getDate("NgayTra"),
-                        rs.getString("TrangThai"),
-                        rs.getBoolean("DaThanhToan"),
-                        rs.getDouble("TongTien")
-                ));
+                        rs.getString("TrangThai")
+                );
+                list.add(dg);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
 
     // Thêm đơn giặt
-    public int insert(DonGiat d) {
-        String sql = "INSERT INTO DonGiat(MaKhachHang, NgayNhan, NgayTra, TrangThai, DaThanhToan, TongTien) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setInt(1, d.getMaKhachHang());
-            ps.setDate(2, d.getNgayNhan());
-            ps.setDate(3, d.getNgayTra());
-            ps.setString(4, d.getTrangThai());
-            ps.setBoolean(5, d.isDaThanhToan());
-            ps.setDouble(6, d.getTongTien());
-
-            int r = ps.executeUpdate();
-            if (r > 0) {
-                try (ResultSet gk = ps.getGeneratedKeys()) {
-                    if (gk.next()) {
-                        return gk.getInt(1); // Trả về mã đơn mới
-                    }
-                }
-            }
-        } catch (SQLException e) {
+    public boolean insert(DonGiat dg) {
+        String sql = "INSERT INTO DonGiat(TenKhachHang, NgayNhan, NgayTra, TrangThai) VALUES (?,?,?,?)";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, dg.getTenKhachHang());
+            ps.setDate(2, new java.sql.Date(dg.getNgayNhan().getTime()));
+            ps.setDate(3, new java.sql.Date(dg.getNgayTra().getTime()));
+            ps.setString(4, dg.getTrangThai());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return -1;
+        return false;
     }
 
     // Cập nhật đơn giặt
-    public boolean update(DonGiat d) {
-        String sql = "UPDATE DonGiat SET MaKhachHang=?, NgayNhan=?, NgayTra=?, TrangThai=?, DaThanhToan=?, TongTien=? WHERE MaDon=?";
+    public boolean update(DonGiat dg) {
+        String sql = "UPDATE DonGiat SET TenKhachHang=?, NgayNhan=?, NgayTra=?, TrangThai=? WHERE MaDon=?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, d.getMaKhachHang());
-            ps.setDate(2, d.getNgayNhan());
-            ps.setDate(3, d.getNgayTra());
-            ps.setString(4, d.getTrangThai());
-            ps.setBoolean(5, d.isDaThanhToan());
-            ps.setDouble(6, d.getTongTien());
-            ps.setInt(7, d.getMaDon());
-
+            ps.setString(1, dg.getTenKhachHang());
+            ps.setDate(2, new java.sql.Date(dg.getNgayNhan().getTime()));
+            ps.setDate(3, new java.sql.Date(dg.getNgayTra().getTime()));
+            ps.setString(4, dg.getTrangThai());
+            ps.setInt(5, dg.getMaDon());
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -88,10 +71,9 @@ public class DonGiatDAO {
     public boolean delete(int maDon) {
         String sql = "DELETE FROM DonGiat WHERE MaDon=?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, maDon);
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;

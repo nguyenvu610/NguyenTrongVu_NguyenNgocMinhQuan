@@ -4,14 +4,13 @@
  */
 package view;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import util.DBConnection;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-import util.DBConnection;
 
 /**
  *
@@ -26,11 +25,24 @@ public class ThongKeVaBaoCaoPanel extends javax.swing.JPanel {
      */
     public ThongKeVaBaoCaoPanel() {
         initComponents();
-        model = new DefaultTableModel(
-                new String[]{"Mã HĐ", "Ngày Tạo", "Khách Hàng", "Tổng Tiền"}, 0
-        );
-        tblThongKeVaBaoCao.setModel(model);
+
+        model = (DefaultTableModel) tblThongKe.getModel();
+        model.setColumnIdentifiers(new String[]{"Mã HĐ", "Ngày tạo", "Tên KH", "Tổng tiền"});
+
         loadData("");
+
+        // Gắn sự kiện cho nút Lọc
+        btnLamMoi1.addActionListener(e -> filterData());
+
+        // Gắn sự kiện cho nút Làm mới
+        btnLamMoi.addActionListener(e -> {
+            txtTuNgay.setDate(null);
+            txtDenNgay.setDate(null);
+            rbnTheoNgay.setSelected(false);
+            rbnTheoTuan.setSelected(false);
+            rbnTheoThang.setSelected(false);
+            loadData("");
+        });
     }
 
     /**
@@ -44,7 +56,7 @@ public class ThongKeVaBaoCaoPanel extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblThongKeVaBaoCao = new javax.swing.JTable();
+        tblThongKe = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         rbnTheoNgay = new javax.swing.JRadioButton();
         rbnTheoTuan = new javax.swing.JRadioButton();
@@ -67,8 +79,8 @@ public class ThongKeVaBaoCaoPanel extends javax.swing.JPanel {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("THỐNG KÊ VÀ BÁO CÁO");
 
-        tblThongKeVaBaoCao.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        tblThongKeVaBaoCao.setModel(new javax.swing.table.DefaultTableModel(
+        tblThongKe.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        tblThongKe.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -79,7 +91,7 @@ public class ThongKeVaBaoCaoPanel extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tblThongKeVaBaoCao);
+        jScrollPane1.setViewportView(tblThongKe);
 
         rbnTheoNgay.setFont(new java.awt.Font("Sitka Heading", 1, 12)); // NOI18N
         rbnTheoNgay.setText("Theo Ngày");
@@ -215,9 +227,6 @@ public class ThongKeVaBaoCaoPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(112, 112, 112)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -225,22 +234,24 @@ public class ThongKeVaBaoCaoPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(166, 166, 166)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jLabel1)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addGap(6, 6, 6)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -251,56 +262,53 @@ public class ThongKeVaBaoCaoPanel extends javax.swing.JPanel {
     private void txtDoanhThuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDoanhThuActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDoanhThuActionPerformed
-private void loadData(String where) {
-        model.setRowCount(0); // Xóa dữ liệu cũ
-        double tongDoanhThu = 0;
-        int tongSoLuong = 0;
+    private void loadData(String where) {
+        model.setRowCount(0);
 
-        String sql = "SELECT MaHD, NgayTao, TenKH, TongTien FROM HoaDon " + where;
+        String sql = "SELECT MaHD, NgayTao, TenKH, TongTien FROM v_ThongKeHoaDon " + where;
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                String maHD = rs.getString("MaHD");
-                Date ngayTao = rs.getDate("NgayTao");
-                String tenKH = rs.getString("TenKH");
-                double tongTien = rs.getDouble("TongTien");
-
-                model.addRow(new Object[]{maHD, ngayTao, tenKH, tongTien});
-                tongSoLuong++;
-                tongDoanhThu += tongTien;
+                model.addRow(new Object[]{
+                    rs.getInt("MaHD"),
+                    rs.getDate("NgayTao"),
+                    rs.getString("TenKH"),
+                    rs.getDouble("TongTien")
+                });
             }
 
-            txtSoLuong.setText(String.valueOf(tongSoLuong));
-            txtDoanhThu.setText(String.valueOf(tongDoanhThu));
-
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi tải dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage());
         }
     }
 
     private void filterData() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        StringBuilder where = new StringBuilder("WHERE 1=1 ");
+        String where = "WHERE 1=1 ";
 
-        try {
-            if (txtTuNgay.getDate() != null && txtDenNgay.getDate() != null) {
-                String tuNgay = sdf.format(txtTuNgay.getDate());
-                String denNgay = sdf.format(txtDenNgay.getDate());
-                where.append("AND NgayTao BETWEEN '").append(tuNgay).append("' AND '").append(denNgay).append("' ");
-            }
+        Date tuNgay = txtTuNgay.getDate();
+        Date denNgay = txtDenNgay.getDate();
 
-            if (rbnTheoNgay.isSelected()) {
-                where.append("AND CONVERT(date, NgayTao) = CONVERT(date, GETDATE()) ");
-            } else if (rbnTheoTuan.isSelected()) {
-                where.append("AND DATEPART(WEEK, NgayTao) = DATEPART(WEEK, GETDATE()) ");
-            } else if (rbnTheoThang.isSelected()) {
-                where.append("AND MONTH(NgayTao) = MONTH(GETDATE()) AND YEAR(NgayTao) = YEAR(GETDATE()) ");
-            }
-
-            loadData(where.toString());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi lọc dữ liệu: " + e.getMessage());
+        if (tuNgay != null) {
+            where += "AND NgayTao >= '" + sdf.format(tuNgay) + "' ";
         }
+        if (denNgay != null) {
+            where += "AND NgayTao <= '" + sdf.format(denNgay) + "' ";
+        }
+
+        // Nếu chọn radio button theo ngày/tuần/tháng
+        if (rbnTheoNgay.isSelected()) {
+            where += "AND NgayTao = CAST(GETDATE() AS DATE) ";
+        } else if (rbnTheoTuan.isSelected()) {
+            where += "AND DATEPART(WEEK, NgayTao) = DATEPART(WEEK, GETDATE()) "
+                    + "AND YEAR(NgayTao) = YEAR(GETDATE()) ";
+        } else if (rbnTheoThang.isSelected()) {
+            where += "AND MONTH(NgayTao) = MONTH(GETDATE()) "
+                    + "AND YEAR(NgayTao) = YEAR(GETDATE()) ";
+        }
+
+        loadData(where);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -318,7 +326,7 @@ private void loadData(String where) {
     private javax.swing.JRadioButton rbnTheoNgay;
     private javax.swing.JRadioButton rbnTheoThang;
     private javax.swing.JRadioButton rbnTheoTuan;
-    private javax.swing.JTable tblThongKeVaBaoCao;
+    private javax.swing.JTable tblThongKe;
     private com.toedter.calendar.JDateChooser txtDenNgay;
     private javax.swing.JTextField txtDoanhThu;
     private javax.swing.JTextField txtSoLuong;

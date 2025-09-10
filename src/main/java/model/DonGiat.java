@@ -12,38 +12,28 @@ import java.sql.Date;
  */
 public class DonGiat {
 
-    private int maDon;
-    private int maKhachHang;
+   private int maDon;
+    private String tenKhachHang;
     private Date ngayNhan;
     private Date ngayTra;
     private String trangThai;
-    private boolean daThanhToan;
-    private double tongTien;
+    
 
-    // Constructor đầy đủ
-    public DonGiat(int maDon, int maKhachHang, Date ngayNhan, Date ngayTra,
-            String trangThai, boolean daThanhToan, double tongTien) {
+    public DonGiat() {}
+
+    public DonGiat(int maDon, String tenKhachHang, Date ngayNhan, Date ngayTra, String trangThai) {
         this.maDon = maDon;
-        this.maKhachHang = maKhachHang;
+        this.tenKhachHang = tenKhachHang;
         this.ngayNhan = ngayNhan;
         this.ngayTra = ngayTra;
         this.trangThai = trangThai;
-        this.daThanhToan = daThanhToan;
-        this.tongTien = tongTien;
     }
 
-    // Constructor khi chưa có mã đơn
-    public DonGiat(int maKhachHang, Date ngayNhan, Date ngayTra,
-            String trangThai, boolean daThanhToan, double tongTien) {
-        this.maKhachHang = maKhachHang;
-        this.ngayNhan = ngayNhan;
-        this.ngayTra = ngayTra;
-        this.trangThai = trangThai;
-        this.daThanhToan = daThanhToan;
-        this.tongTien = tongTien;
+    public DonGiat(int i, String tenKH, java.util.Date ngayNhan, java.util.Date ngayTra, String trangThai) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    // Getter/Setter
+    // Getter & Setter
     public int getMaDon() {
         return maDon;
     }
@@ -52,12 +42,12 @@ public class DonGiat {
         this.maDon = maDon;
     }
 
-    public int getMaKhachHang() {
-        return maKhachHang;
+    public String getTenKhachHang() {
+        return tenKhachHang;
     }
 
-    public void setMaKhachHang(int maKhachHang) {
-        this.maKhachHang = maKhachHang;
+    public void setTenKhachHang(String tenKhachHang) {
+        this.tenKhachHang = tenKhachHang;
     }
 
     public Date getNgayNhan() {
@@ -82,34 +72,5 @@ public class DonGiat {
 
     public void setTrangThai(String trangThai) {
         this.trangThai = trangThai;
-    }
-
-    public boolean isDaThanhToan() {
-        return daThanhToan;
-    }
-
-    public void setDaThanhToan(boolean daThanhToan) {
-        this.daThanhToan = daThanhToan;
-    }
-
-    public double getTongTien() {
-        return tongTien;
-    }
-
-    public void setTongTien(double tongTien) {
-        this.tongTien = tongTien;
-    }
-
-    @Override
-    public String toString() {
-        return "DonGiat{"
-                + "maDon=" + maDon
-                + ", maKhachHang=" + maKhachHang
-                + ", ngayNhan=" + ngayNhan
-                + ", ngayTra=" + ngayTra
-                + ", trangThai='" + trangThai + '\''
-                + ", daThanhToan=" + daThanhToan
-                + ", tongTien=" + tongTien
-                + '}';
     }
 }

@@ -67,6 +67,11 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblKhachHang.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tblKhachHangFocusGained(evt);
+            }
+        });
         tblKhachHang.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblKhachHangMouseClicked(evt);
@@ -298,6 +303,10 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
             txtDiaChi.setText(tblKhachHang.getValueAt(row, 3).toString());
         }
     }//GEN-LAST:event_tblKhachHangMouseClicked
+
+    private void tblKhachHangFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblKhachHangFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblKhachHangFocusGained
 
     private void loadData() {
         DefaultTableModel model = (DefaultTableModel) tblKhachHang.getModel();

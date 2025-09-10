@@ -228,7 +228,8 @@ public class QuanLyDichVuPanel extends javax.swing.JPanel {
         cboMaDichVu.removeAllItems(); // Xóa dữ liệu cũ
         List<DichVuGiat> list = dao.getAll();
         for (DichVuGiat dv : list) {
-            cboMaDichVu.addItem(dv.getTenDichVu()); // Thêm tên dịch vụ vào ComboBox
+            String maFormat = String.format("M%03d", dv.getMaDichVu()); // format thành M001, M002
+            cboMaDichVu.addItem(maFormat);
         }
     }
 

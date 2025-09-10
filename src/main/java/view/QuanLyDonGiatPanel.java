@@ -4,16 +4,13 @@
  */
 package view;
 
-import model.DichVuGiat;
-import model.DichVuGiatDAO;
-import java.util.List;
+import model.DonGiat;
+import model.DonGiatDAO;
 
-import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import util.DBConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -21,68 +18,68 @@ import util.DBConnection;
  */
 public class QuanLyDonGiatPanel extends javax.swing.JPanel {
 
-    private DichVuGiatDAO dichVuDAO = new DichVuGiatDAO();
     private DefaultTableModel model;
-    private Connection conn;
+    private DonGiatDAO donGiatDAO = new DonGiatDAO();
 
     /**
      * Creates new form QuanLyDonGiatPanel
      */
     public QuanLyDonGiatPanel() {
         initComponents();
-        conn = DBConnection.getConnection();
+
         model = (DefaultTableModel) tblDonHang.getModel();
-        model.setColumnIdentifiers(new String[]{"Khách Hàng", "Ngày Nhận", "Ngày Trả", "Dịch Vụ"});
-        loadComboBoxDichVu();
+        model.setColumnIdentifiers(new String[]{
+            "Mã Đơn", "Khách Hàng", "Ngày Nhận", "Ngày Trả", "Trạng Thái"
+        });
+
+        cboTrangThai = new javax.swing.JComboBox<>();
+        cboTrangThai.setFont(new java.awt.Font("Arial", 0, 14));
+        cboTrangThai.setModel(new javax.swing.DefaultComboBoxModel<>(
+                new String[]{"Chờ nhận", "Đang giặt", "Hoàn thành", "Đã giao"}
+        ));
+        cboTrangThai.setSelectedIndex(0);
+
         loadData();
         addTableClickEvent();
     }
 
-    private void loadComboBoxDichVu() {
-        cboMaDichVu.removeAllItems();
-        List<DichVuGiat> list = dichVuDAO.getAll();
-        for (DichVuGiat dv : list) {
-            cboMaDichVu.addItem(dv.toString());
-        }
-    }
-
     private void loadData() {
-        try {
-            model.setRowCount(0);
-            String sql = "SELECT KhachHang, NgayNhan, NgayTra, TrangThai FROM DonGiat";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            while (rs.next()) {
-                String khachHang = rs.getString("KhachHang");
-                Date ngayNhan = rs.getDate("NgayNhan");
-                Date ngayTra = rs.getDate("NgayTra");
-                String trangThai = rs.getString("TrangThai");
-                model.addRow(new Object[]{khachHang, sdf.format(ngayNhan), sdf.format(ngayTra), trangThai});
-            }
-            rs.close();
-            ps.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        model.setRowCount(0);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        for (DonGiat dg : donGiatDAO.getAll()) {
+            model.addRow(new Object[]{
+                dg.getMaDon(),
+                dg.getTenKhachHang(),
+                sdf.format(dg.getNgayNhan()),
+                sdf.format(dg.getNgayTra()),
+                dg.getTrangThai()
+            });
         }
     }
 
     private void addTableClickEvent() {
         tblDonHang.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int selectedRow = tblDonHang.getSelectedRow();
-                if (selectedRow != -1) {
-                    txtKhanhHang.setText(model.getValueAt(selectedRow, 0).toString());
+                int row = tblDonHang.getSelectedRow();
+                if (row >= 0) {
                     try {
+                        // Tên khách hàng
+                        txtKhachHang.setText(model.getValueAt(row, 1).toString());
+
+                        // Ngày nhận và Ngày trả
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                        Date ngayNhan = sdf.parse(model.getValueAt(selectedRow, 1).toString());
-                        Date ngayTra = sdf.parse(model.getValueAt(selectedRow, 2).toString());
+                        Date ngayNhan = sdf.parse(model.getValueAt(row, 2).toString());
+                        Date ngayTra = sdf.parse(model.getValueAt(row, 3).toString());
                         txtNgayNhan.setDate(ngayNhan);
                         txtNgayTra.setDate(ngayTra);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+                        // Trạng thái (dùng combobox)
+                        cboTrangThai.setSelectedItem(model.getValueAt(row, 4).toString());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
-                    cboMaDichVu.setSelectedItem(model.getValueAt(selectedRow, 3).toString());
                 }
             }
         });
@@ -102,10 +99,10 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        txtKhanhHang = new javax.swing.JTextField();
+        txtKhachHang = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        cboMaDichVu = new javax.swing.JComboBox<>();
+        cboTrangThai = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
         txtNgayNhan = new com.toedter.calendar.JDateChooser();
         txtNgayTra = new com.toedter.calendar.JDateChooser();
@@ -127,6 +124,11 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblDonHang.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tblDonHangFocusGained(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblDonHang);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 28)); // NOI18N
@@ -137,7 +139,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel2.setText("Khách Hàng");
 
-        txtKhanhHang.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        txtKhachHang.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel3.setText("Ngày Nhận");
@@ -146,8 +148,13 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Ngày Trả");
 
-        cboMaDichVu.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        cboMaDichVu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboTrangThai.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        cboTrangThai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboTrangThai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboTrangThaiActionPerformed(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
         jLabel6.setText("Trạng Thái");
@@ -165,10 +172,10 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
                     .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cboMaDichVu, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cboTrangThai, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtNgayTra, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
                     .addComponent(txtNgayNhan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtKhanhHang))
+                    .addComponent(txtKhachHang))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -176,7 +183,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtKhanhHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,7 +195,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cboMaDichVu, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
@@ -259,16 +266,16 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(191, 191, 191)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 690, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(144, 144, 144)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -281,92 +288,82 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnThemDGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemDGActionPerformed
-        String khachHang = txtKhanhHang.getText().trim();
-        Date ngayNhan = txtNgayNhan.getDate();
-        Date ngayTra = txtNgayTra.getDate();
-        String dichVu = cboMaDichVu.getSelectedItem().toString();
-
-        if (khachHang.isEmpty() || ngayNhan == null || ngayTra == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
-            return;
-        }
-
         try {
-            String sql = "INSERT INTO DonGiat(KhachHang, NgayNhan, NgayTra, TrangThai) VALUES (?,?,?,?)";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, khachHang);
-            ps.setDate(2, new java.sql.Date(ngayNhan.getTime()));
-            ps.setDate(3, new java.sql.Date(ngayTra.getTime()));
-            ps.setString(4, dichVu); // ở đây bạn nên đổi tên cột thành DichVu cho rõ
+            String tenKH = txtKhachHang.getText().trim();
+            Date ngayNhan = txtNgayNhan.getDate();
+            Date ngayTra = txtNgayTra.getDate();
+            String trangThai = cboTrangThai.getSelectedItem().toString();
 
-            int result = ps.executeUpdate();
-            if (result > 0) {
-                JOptionPane.showMessageDialog(this, "Thêm đơn giặt thành công!");
+            if (tenKH.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khách hàng!");
+                return;
+            }
+
+            DonGiat dg = new DonGiat(0, tenKH, ngayNhan, ngayTra, trangThai);
+            if (donGiatDAO.insert(dg)) {
+                JOptionPane.showMessageDialog(this, "Thêm thành công!");
                 loadData();
                 lamMoiForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm thất bại!");
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi thêm: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
         }
     }//GEN-LAST:event_btnThemDGActionPerformed
 
     private void btnXoaDGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaDGActionPerformed
         int selectedRow = tblDonHang.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn để xóa!");
+            JOptionPane.showMessageDialog(this, "Chọn một đơn để xóa!");
             return;
         }
 
-        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        int maDon = Integer.parseInt(model.getValueAt(selectedRow, 0).toString());
+        int confirm = JOptionPane.showConfirmDialog(this, "Xóa đơn giặt này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) {
             return;
         }
 
-        try {
-            int maDon = (int) tblDonHang.getValueAt(selectedRow, 0); // cần cột MaDon trong table model
-            String sql = "DELETE FROM DonGiat WHERE MaDon=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, maDon);
-            if (ps.executeUpdate() > 0) {
-                JOptionPane.showMessageDialog(this, "Xóa thành công!");
-                loadData();
-                lamMoiForm();
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi xóa: " + e.getMessage());
+        if (donGiatDAO.delete(maDon)) {
+            JOptionPane.showMessageDialog(this, "Xóa thành công!");
+            loadData();
+            lamMoiForm();
+        } else {
+            JOptionPane.showMessageDialog(this, "Xóa thất bại!");
         }
     }//GEN-LAST:event_btnXoaDGActionPerformed
 
     private void btnSuaDGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaDGActionPerformed
         int selectedRow = tblDonHang.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn để sửa!");
+            JOptionPane.showMessageDialog(this, "Chọn một đơn để sửa!");
             return;
         }
 
-        String khachHang = txtKhanhHang.getText();
-        Date ngayNhan = txtNgayNhan.getDate();
-        Date ngayTra = txtNgayTra.getDate();
-        String trangThai = cboMaDichVu.getSelectedItem().toString();
+        try {
+            int maDon = Integer.parseInt(model.getValueAt(selectedRow, 0).toString());
+            String tenKH = txtKhachHang.getText().trim();
+            Date ngayNhan = txtNgayNhan.getDate();
+            Date ngayTra = txtNgayTra.getDate();
+            String trangThai = cboTrangThai.getSelectedItem().toString();
 
-        if (khachHang.isEmpty() || ngayNhan == null || ngayTra == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
-            return;
+            DonGiat dg = new DonGiat(maDon, tenKH, ngayNhan, ngayTra, trangThai);
+            if (donGiatDAO.update(dg)) {
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+                loadData();
+                lamMoiForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Cập nhật thất bại!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
         }
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        model.setValueAt(khachHang, selectedRow, 0);
-        model.setValueAt(sdf.format(ngayNhan), selectedRow, 1);
-        model.setValueAt(sdf.format(ngayTra), selectedRow, 2);
-        model.setValueAt(trangThai, selectedRow, 3);
-
-        JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-        lamMoiForm();
     }//GEN-LAST:event_btnSuaDGActionPerformed
 
     private void btnLamMoiDGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLamMoiDGActionPerformed
@@ -374,12 +371,20 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
     }
 
     private void lamMoiForm() {
-        txtKhanhHang.setText("");
-        txtNgayNhan.setDate(null);
-        txtNgayTra.setDate(null);
-        cboMaDichVu.setSelectedIndex(0);
+        txtKhachHang.setText("");
+        txtNgayNhan.setDate(null);  
+        txtNgayTra.setDate(null);    
+        cboTrangThai.setSelectedIndex(0); 
         tblDonHang.clearSelection();
     }//GEN-LAST:event_btnLamMoiDGActionPerformed
+
+    private void cboTrangThaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTrangThaiActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cboTrangThaiActionPerformed
+
+    private void tblDonHangFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblDonHangFocusGained
+
+    }//GEN-LAST:event_tblDonHangFocusGained
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -387,7 +392,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnSuaDG;
     private javax.swing.JButton btnThemDG;
     private javax.swing.JButton btnXoaDG;
-    private javax.swing.JComboBox<String> cboMaDichVu;
+    private javax.swing.JComboBox<String> cboTrangThai;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -397,7 +402,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblDonHang;
-    private javax.swing.JTextField txtKhanhHang;
+    private javax.swing.JTextField txtKhachHang;
     private com.toedter.calendar.JDateChooser txtNgayNhan;
     private com.toedter.calendar.JDateChooser txtNgayTra;
     // End of variables declaration//GEN-END:variables

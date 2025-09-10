@@ -27,7 +27,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
     public TimKiemDonHangPanel() {
         initComponents();
         model = new DefaultTableModel(
-                new String[]{"Mã HĐ", "Tên KH", "SĐT", "Trạng Thái", "Ngày Tạo"}, 0
+                new String[]{"Mã Đơn", "Tên KH", "SĐT", "Trạng Thái", "Dịch vụ"}, 0
         );
         tblTraCuu.setModel(model);
 
@@ -132,13 +132,13 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
 
         tblTraCuu.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7"
             }
         ));
         jScrollPane1.setViewportView(tblTraCuu);
@@ -221,12 +221,17 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
-private void loadData(String where, Object... params) {
+    private void loadData(String where, Object... params) {
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "SELECT MaHD, TenKH, SDT, TrangThai, NgayTao FROM HoaDon " + where;
-            PreparedStatement ps = conn.prepareStatement(sql);
+            String sql = "SELECT hd.MaHD, hd.TenKH, hd.SDT, hd.TrangThai, "
+                    + "STRING_AGG(dv.TenDichVu, ', ') AS DichVu "
+                    + "FROM HoaDon hd "
+                    + "JOIN ChiTietHoaDon cthd ON hd.MaHD = cthd.MaHD "
+                    + "JOIN DichVuGiat dv ON cthd.MaDichVu = dv.MaDichVu "
+                    + where
+                    + " GROUP BY hd.MaHD, hd.TenKH, hd.SDT, hd.TrangThai";
 
-            // Gán tham số vào câu SQL (nếu có)
+            PreparedStatement ps = conn.prepareStatement(sql);
             for (int i = 0; i < params.length; i++) {
                 ps.setObject(i + 1, params[i]);
             }
@@ -239,7 +244,7 @@ private void loadData(String where, Object... params) {
                     rs.getString("TenKH"),
                     rs.getString("SDT"),
                     rs.getString("TrangThai"),
-                    rs.getDate("NgayTao")
+                    rs.getString("DichVu") // cột dịch vụ
                 });
             }
         } catch (Exception e) {
