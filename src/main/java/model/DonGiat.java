@@ -12,7 +12,7 @@ import java.sql.Date;
  */
 public class DonGiat {
 
-   private int maDon;
+    private int maDon;
     private String tenKhachHang;
     private Date ngayNhan;
     private Date ngayTra;

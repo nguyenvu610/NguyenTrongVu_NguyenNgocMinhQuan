@@ -29,7 +29,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
 
         model = (DefaultTableModel) tblDonHang.getModel();
         model.setColumnIdentifiers(new String[]{
-            "Mã Đơn", "Khách Hàng", "Ngày Nhận", "Ngày Trả", "Trạng Thái"
+            "Mã Đơn", "Tên Khách Hàng", "Ngày Nhận", "Ngày Trả", "Trạng Thái"
         });
 
         cboTrangThai = new javax.swing.JComboBox<>();
@@ -51,35 +51,41 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
             model.addRow(new Object[]{
                 dg.getMaDon(),
                 dg.getTenKhachHang(),
-                sdf.format(dg.getNgayNhan()),
-                sdf.format(dg.getNgayTra()),
+                dg.getNgayNhan() != null ? sdf.format(dg.getNgayNhan()) : "",
+                dg.getNgayTra() != null ? sdf.format(dg.getNgayTra()) : "",
                 dg.getTrangThai()
             });
         }
     }
 
     private void addTableClickEvent() {
-        tblDonHang.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int row = tblDonHang.getSelectedRow();
-                if (row >= 0) {
-                    try {
-                        // Tên khách hàng
-                        txtKhachHang.setText(model.getValueAt(row, 1).toString());
+        tblDonHang.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = tblDonHang.getSelectedRow();
+            if (selectedRow != -1) {
+                try {
+                    txtKhachHang.setText(model.getValueAt(selectedRow, 1).toString());
 
-                        // Ngày nhận và Ngày trả
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                        Date ngayNhan = sdf.parse(model.getValueAt(row, 2).toString());
-                        Date ngayTra = sdf.parse(model.getValueAt(row, 3).toString());
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    String ngayNhanStr = model.getValueAt(selectedRow, 2).toString();
+                    String ngayTraStr = model.getValueAt(selectedRow, 3).toString();
+
+                    if (!ngayNhanStr.isEmpty()) {
+                        Date ngayNhan = sdf.parse(ngayNhanStr);
                         txtNgayNhan.setDate(ngayNhan);
-                        txtNgayTra.setDate(ngayTra);
-
-                        // Trạng thái (dùng combobox)
-                        cboTrangThai.setSelectedItem(model.getValueAt(row, 4).toString());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                    } else {
+                        txtNgayNhan.setDate(null);
                     }
+
+                    if (!ngayTraStr.isEmpty()) {
+                        Date ngayTra = sdf.parse(ngayTraStr);
+                        txtNgayTra.setDate(ngayTra);
+                    } else {
+                        txtNgayTra.setDate(null);
+                    }
+
+                    cboTrangThai.setSelectedItem(model.getValueAt(selectedRow, 4).toString());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         });
@@ -127,6 +133,11 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         tblDonHang.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 tblDonHangFocusGained(evt);
+            }
+        });
+        tblDonHang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDonHangMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tblDonHang);
@@ -372,9 +383,9 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
 
     private void lamMoiForm() {
         txtKhachHang.setText("");
-        txtNgayNhan.setDate(null);  
-        txtNgayTra.setDate(null);    
-        cboTrangThai.setSelectedIndex(0); 
+        txtNgayNhan.setDate(null);
+        txtNgayTra.setDate(null);
+        cboTrangThai.setSelectedIndex(0);
         tblDonHang.clearSelection();
     }//GEN-LAST:event_btnLamMoiDGActionPerformed
 
@@ -385,6 +396,43 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
     private void tblDonHangFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblDonHangFocusGained
 
     }//GEN-LAST:event_tblDonHangFocusGained
+
+    private void tblDonHangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDonHangMouseClicked
+        int row = tblDonHang.getSelectedRow();
+        if (row >= 0) {
+            // Lấy tên khách hàng
+            txtKhachHang.setText(tblDonHang.getValueAt(row, 1).toString());
+
+            // Lấy ngày nhận
+            String ngayNhanStr = tblDonHang.getValueAt(row, 2).toString();
+            if (!ngayNhanStr.isEmpty()) {
+                try {
+                    Date ngayNhan = new SimpleDateFormat("dd/MM/yyyy").parse(ngayNhanStr);
+                    txtNgayNhan.setDate(ngayNhan);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                txtNgayNhan.setDate(null);
+            }
+
+            // Lấy ngày trả
+            String ngayTraStr = tblDonHang.getValueAt(row, 3).toString();
+            if (!ngayTraStr.isEmpty()) {
+                try {
+                    Date ngayTra = new SimpleDateFormat("dd/MM/yyyy").parse(ngayTraStr);
+                    txtNgayTra.setDate(ngayTra);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                txtNgayTra.setDate(null);
+            }
+
+            // Lấy trạng thái
+            cboTrangThai.setSelectedItem(tblDonHang.getValueAt(row, 4).toString());
+        }
+    }//GEN-LAST:event_tblDonHangMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
