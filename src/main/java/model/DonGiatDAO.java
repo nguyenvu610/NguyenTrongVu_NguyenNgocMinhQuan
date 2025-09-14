@@ -19,7 +19,11 @@ public class DonGiatDAO {
 
     public List<DonGiat> getAll() {
         List<DonGiat> list = new ArrayList<>();
-        String sql = "SELECT MaDon, TenKhachHang, NgayNhan, NgayTra, TrangThai FROM DonGiat";
+        String sql = "SELECT dg.MaDon, kh.TenKhachHang, dg.NgayNhan, dg.NgayTra, dg.TrangThai "
+                + "FROM DonGiat dg "
+                + "JOIN KhachHang kh ON dg.MaKhachHang = kh.MaKhachHang "
+                + "ORDER BY dg.MaDon DESC";
+
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
@@ -38,14 +42,16 @@ public class DonGiatDAO {
         return list;
     }
 
-    // Thêm đơn giặt
     public boolean insert(DonGiat dg) {
-        String sql = "INSERT INTO DonGiat (TenKhachHang, NgayNhan, NgayTra, TrangThai) VALUES (?,?,?,?)";
+        // Trước tiên cần tìm hoặc tạo khách hàng
+        int maKhachHang = findOrCreateKhachHang(dg.getTenKhachHang());
+
+        String sql = "INSERT INTO DonGiat (MaKhachHang, NgayNhan, NgayTra, TrangThai) VALUES (?,?,?,?)";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, dg.getTenKhachHang());
-            ps.setDate(2, new java.sql.Date(dg.getNgayNhan().getTime()));
-            ps.setDate(3, dg.getNgayTra() != null ? new java.sql.Date(dg.getNgayTra().getTime()) : null);
+            ps.setInt(1, maKhachHang);
+            ps.setDate(2, dg.getNgayNhan());
+            ps.setDate(3, dg.getNgayTra());
             ps.setString(4, dg.getTrangThai());
 
             return ps.executeUpdate() > 0;
@@ -55,14 +61,16 @@ public class DonGiatDAO {
         return false;
     }
 
-    // Cập nhật đơn giặt
     public boolean update(DonGiat dg) {
-        String sql = "UPDATE DonGiat SET TenKhachHang=?, NgayNhan=?, NgayTra=?, TrangThai=? WHERE MaDon=?";
+        // Tìm hoặc tạo khách hàng
+        int maKhachHang = findOrCreateKhachHang(dg.getTenKhachHang());
+
+        String sql = "UPDATE DonGiat SET MaKhachHang=?, NgayNhan=?, NgayTra=?, TrangThai=? WHERE MaDon=?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, dg.getTenKhachHang());
-            ps.setDate(2, new java.sql.Date(dg.getNgayNhan().getTime()));
-            ps.setDate(3, dg.getNgayTra() != null ? new java.sql.Date(dg.getNgayTra().getTime()) : null);
+            ps.setInt(1, maKhachHang);
+            ps.setDate(2, dg.getNgayNhan());
+            ps.setDate(3, dg.getNgayTra());
             ps.setString(4, dg.getTrangThai());
             ps.setInt(5, dg.getMaDon());
 
@@ -84,5 +92,66 @@ public class DonGiatDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // THÊM MỚI: Phương thức tìm hoặc tạo khách hàng
+    private int findOrCreateKhachHang(String tenKhachHang) {
+        // Tìm khách hàng có sẵn
+        String sqlFind = "SELECT MaKhachHang FROM KhachHang WHERE TenKhachHang = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sqlFind)) {
+
+            ps.setString(1, tenKhachHang);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("MaKhachHang");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Nếu không tìm thấy, tạo mới
+        String sqlInsert = "INSERT INTO KhachHang (TenKhachHang) VALUES (?)";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, tenKhachHang);
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 1; // Fallback
+    }
+
+    // THÊM MỚI: Tìm đơn giặt theo mã
+    public DonGiat getById(int maDon) {
+        String sql = "SELECT dg.MaDon, kh.TenKhachHang, dg.NgayNhan, dg.NgayTra, dg.TrangThai "
+                + "FROM DonGiat dg "
+                + "JOIN KhachHang kh ON dg.MaKhachHang = kh.MaKhachHang "
+                + "WHERE dg.MaDon = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, maDon);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new DonGiat(
+                        rs.getInt("MaDon"),
+                        rs.getString("TenKhachHang"),
+                        rs.getDate("NgayNhan"),
+                        rs.getDate("NgayTra"),
+                        rs.getString("TrangThai")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

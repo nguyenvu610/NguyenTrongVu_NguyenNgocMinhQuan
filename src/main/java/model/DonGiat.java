@@ -17,10 +17,12 @@ public class DonGiat {
     private Date ngayNhan;
     private Date ngayTra;
     private String trangThai;
-    
 
-    public DonGiat() {}
+    // Constructor mặc định
+    public DonGiat() {
+    }
 
+    // Constructor với java.sql.Date
     public DonGiat(int maDon, String tenKhachHang, Date ngayNhan, Date ngayTra, String trangThai) {
         this.maDon = maDon;
         this.tenKhachHang = tenKhachHang;
@@ -29,8 +31,14 @@ public class DonGiat {
         this.trangThai = trangThai;
     }
 
-    public DonGiat(int i, String tenKH, java.util.Date ngayNhan, java.util.Date ngayTra, String trangThai) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    // Constructor với java.util.Date - ĐÃ SỬA LỖI
+    public DonGiat(int maDon, String tenKhachHang, java.util.Date ngayNhan, java.util.Date ngayTra, String trangThai) {
+        this.maDon = maDon;
+        this.tenKhachHang = tenKhachHang;
+        // Chuyển đổi từ java.util.Date sang java.sql.Date
+        this.ngayNhan = ngayNhan != null ? new java.sql.Date(ngayNhan.getTime()) : null;
+        this.ngayTra = ngayTra != null ? new java.sql.Date(ngayTra.getTime()) : null;
+        this.trangThai = trangThai;
     }
 
     // Getter & Setter
@@ -72,5 +80,16 @@ public class DonGiat {
 
     public void setTrangThai(String trangThai) {
         this.trangThai = trangThai;
+    }
+
+    @Override
+    public String toString() {
+        return "DonGiat{"
+                + "maDon=" + maDon
+                + ", tenKhachHang='" + tenKhachHang + '\''
+                + ", ngayNhan=" + ngayNhan
+                + ", ngayTra=" + ngayTra
+                + ", trangThai='" + trangThai + '\''
+                + '}';
     }
 }

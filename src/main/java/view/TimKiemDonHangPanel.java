@@ -4,14 +4,14 @@
  */
 package view;
 
+import util.DBConnection;
+
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JOptionPane;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import util.DBConnection;
 
 /**
  *
@@ -20,26 +20,17 @@ import util.DBConnection;
 public class TimKiemDonHangPanel extends javax.swing.JPanel {
 
     private DefaultTableModel model;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Creates new form TimKiemDonHangPanel
      */
     public TimKiemDonHangPanel() {
         initComponents();
-        model = new DefaultTableModel(
-                new String[]{"Mã Đơn", "Tên KH", "SĐT", "Trạng Thái", "Dịch vụ"}, 0
-        );
-        tblTraCuu.setModel(model);
-
-        // Thêm trạng thái thật vào combobox
-        cboTrangThai.removeAllItems();
-        cboTrangThai.addItem("Tất cả");
-        cboTrangThai.addItem("Chưa xử lý");
-        cboTrangThai.addItem("Đang giặt");
-        cboTrangThai.addItem("Hoàn thành");
-        cboTrangThai.addItem("Đã giao");
-
-        loadData("");
+        setupTable();
+        setupComboBox();
+        loadAllData();
+        setupTableClickEvent();
     }
 
     /**
@@ -148,6 +139,11 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7"
             }
         ));
+        tblTraCuu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblTraCuuMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblTraCuu);
 
         btnTimKiem.setFont(new java.awt.Font("Sitka Heading", 1, 14)); // NOI18N
@@ -218,77 +214,229 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    private void loadData(String where, Object... params) {
-        try (Connection conn = DBConnection.getConnection()) {
-            String sql = "SELECT hd.MaHD, hd.TenKH, hd.SDT, hd.TrangThai, "
-                    + "STRING_AGG(dv.TenDichVu, ', ') AS DichVu "
-                    + "FROM HoaDon hd "
-                    + "JOIN ChiTietHoaDon cthd ON hd.MaHD = cthd.MaHD "
-                    + "JOIN DichVuGiat dv ON cthd.MaDichVu = dv.MaDichVu "
-                    + where
-                    + " GROUP BY hd.MaHD, hd.TenKH, hd.SDT, hd.TrangThai";
-
-            PreparedStatement ps = conn.prepareStatement(sql);
-            for (int i = 0; i < params.length; i++) {
-                ps.setObject(i + 1, params[i]);
+    private void setupTable() {
+        model = new DefaultTableModel(new String[]{
+            "Mã Đơn", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái",
+            "Ngày Nhận", "Ngày Trả", "Dịch Vụ"
+        }, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép edit trực tiếp
             }
+        };
+        tblTraCuu.setModel(model);
 
-            ResultSet rs = ps.executeQuery();
-            model.setRowCount(0); // Xóa dữ liệu cũ
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    rs.getString("MaHD"),
-                    rs.getString("TenKH"),
-                    rs.getString("SDT"),
-                    rs.getString("TrangThai"),
-                    rs.getString("DichVu") // cột dịch vụ
-                });
+        // Thiết lập độ rộng cột
+        tblTraCuu.getColumnModel().getColumn(0).setPreferredWidth(80);  // Mã Đơn
+        tblTraCuu.getColumnModel().getColumn(1).setPreferredWidth(150); // Tên KH
+        tblTraCuu.getColumnModel().getColumn(2).setPreferredWidth(100); // SĐT
+        tblTraCuu.getColumnModel().getColumn(3).setPreferredWidth(100); // Trạng Thái
+        tblTraCuu.getColumnModel().getColumn(4).setPreferredWidth(100); // Ngày Nhận
+        tblTraCuu.getColumnModel().getColumn(5).setPreferredWidth(100); // Ngày Trả
+        tblTraCuu.getColumnModel().getColumn(6).setPreferredWidth(200); // Dịch Vụ
+    }
+
+    private void setupComboBox() {
+        cboTrangThai.removeAllItems();
+        cboTrangThai.addItem("Tất cả");
+        cboTrangThai.addItem("Chờ xử lý");
+        cboTrangThai.addItem("Đang giặt");
+        cboTrangThai.addItem("Hoàn thành");
+        cboTrangThai.addItem("Đã giao");
+        cboTrangThai.setSelectedIndex(0);
+    }
+
+    private void setupTableClickEvent() {
+        tblTraCuu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (evt.getClickCount() == 2) { // Double click
+                    showDetailDialog();
+                }
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi tải dữ liệu: " + e.getMessage());
+        });
+    }
+
+    private void showDetailDialog() {
+        int selectedRow = tblTraCuu.getSelectedRow();
+        if (selectedRow == -1) {
+            return;
         }
+
+        String maDon = tblTraCuu.getValueAt(selectedRow, 0).toString();
+        String tenKH = tblTraCuu.getValueAt(selectedRow, 1).toString();
+        String sdt = tblTraCuu.getValueAt(selectedRow, 2).toString();
+        String trangThai = tblTraCuu.getValueAt(selectedRow, 3).toString();
+        String ngayNhan = tblTraCuu.getValueAt(selectedRow, 4).toString();
+        String ngayTra = tblTraCuu.getValueAt(selectedRow, 5) != null
+                ? tblTraCuu.getValueAt(selectedRow, 5).toString() : "Chưa có";
+        String dichVu = tblTraCuu.getValueAt(selectedRow, 6) != null
+                ? tblTraCuu.getValueAt(selectedRow, 6).toString() : "Chưa có dịch vụ";
+
+        String message = String.format(
+                "THÔNG TIN ĐƠN HÀNG\n\n"
+                + "Mã đơn: %s\n"
+                + "Khách hàng: %s\n"
+                + "Số điện thoại: %s\n"
+                + "Trạng thái: %s\n"
+                + "Ngày nhận: %s\n"
+                + "Ngày trả: %s\n\n"
+                + "Dịch vụ sử dụng:\n%s",
+                maDon, tenKH, sdt, trangThai, ngayNhan, ngayTra, dichVu
+        );
+
+        JOptionPane.showMessageDialog(this, message,
+                "Chi tiết đơn hàng #" + maDon,
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void btnTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimKiemActionPerformed
-        String maHD = txtHoaDon.getText().trim();
+        String maDon = txtHoaDon.getText().trim();
         String sdt = txtSDT.getText().trim();
         String tenKH = txtKhanhHang.getText().trim();
         String trangThai = cboTrangThai.getSelectedItem().toString();
 
-        StringBuilder where = new StringBuilder("WHERE 1=1 ");
+        // Kiểm tra có điều kiện tìm kiếm nào không
+        if (maDon.isEmpty() && sdt.isEmpty() && tenKH.isEmpty() && trangThai.equals("Tất cả")) {
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng nhập ít nhất một điều kiện tìm kiếm!",
+                    "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        StringBuilder whereClause = new StringBuilder("WHERE 1=1 ");
         List<Object> params = new ArrayList<>();
 
-        if (!maHD.isEmpty()) {
-            where.append("AND MaHD LIKE ? ");
-            params.add("%" + maHD + "%");
-        }
-        if (!sdt.isEmpty()) {
-            where.append("AND SDT LIKE ? ");
-            params.add("%" + sdt + "%");
-        }
-        if (!tenKH.isEmpty()) {
-            where.append("AND TenKH LIKE ? ");
-            params.add("%" + tenKH + "%");
-        }
-        if (!trangThai.equals("Tất cả")) {
-            where.append("AND TrangThai = ? ");
-            params.add(trangThai);
+        if (!maDon.isEmpty()) {
+            try {
+                // Nếu nhập số thì tìm chính xác
+                int maDonInt = Integer.parseInt(maDon);
+                whereClause.append("AND MaDon = ? ");
+                params.add(maDonInt);
+            } catch (NumberFormatException e) {
+                // Nếu không phải số thì tìm LIKE
+                whereClause.append("AND CAST(MaDon AS NVARCHAR) LIKE ? ");
+                params.add("%" + maDon + "%");
+            }
         }
 
-        loadData(where.toString(), params.toArray());
+        if (!sdt.isEmpty()) {
+            whereClause.append("AND SoDienThoai LIKE ? ");
+            params.add("%" + sdt + "%");
+        }
+
+        if (!tenKH.isEmpty()) {
+            whereClause.append("AND TenKhachHang LIKE N'%' + ? + N'%' ");
+            params.add(tenKH);
+        }
+
+        if (!trangThai.equals("Tất cả")) {
+            whereClause.append("AND TrangThai = N'?' ");
+            // Fix: Không cần thêm vào params vì đã embed trực tiếp
+            whereClause = new StringBuilder(whereClause.toString().replace("N'?'", "N'" + trangThai + "'"));
+        }
+
+        loadData(whereClause.toString(), params.toArray());
     }//GEN-LAST:event_btnTimKiemActionPerformed
 
     private void btnLamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLamMoiActionPerformed
+        clearForm();
+        loadAllData();
+        JOptionPane.showMessageDialog(this,
+                "Đã làm mới dữ liệu!",
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_btnLamMoiActionPerformed
+
+    private void tblTraCuuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTraCuuMouseClicked
+        int row = tblTraCuu.getSelectedRow();
+        if (row >= 0) {
+            txtHoaDon.setText(tblTraCuu.getValueAt(row, 0).toString());
+            txtKhanhHang.setText(tblTraCuu.getValueAt(row, 1).toString());
+            txtSDT.setText(tblTraCuu.getValueAt(row, 2).toString());
+            cboTrangThai.setSelectedItem(tblTraCuu.getValueAt(row, 3).toString());
+        }
+    }//GEN-LAST:event_tblTraCuuMouseClicked
+
+    private void clearForm() {
         txtHoaDon.setText("");
         txtSDT.setText("");
         txtKhanhHang.setText("");
         cboTrangThai.setSelectedIndex(0);
-        loadData("");
-    }//GEN-LAST:event_btnLamMoiActionPerformed
+        tblTraCuu.clearSelection();
+    }
 
+    private void loadAllData() {
+        loadData("", new Object[0]);
+    }
+
+    private void loadData(String whereClause, Object... params) {
+        try (Connection conn = DBConnection.getConnection()) {
+            if (conn == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Không thể kết nối cơ sở dữ liệu!",
+                        "Lỗi kết nối",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String sql = "SELECT MaDon, TenKhachHang, SoDienThoai, TrangThai, NgayNhan, NgayTra, DichVuSuDung "
+                    + "FROM v_TraCuuDonGiat "
+                    + (whereClause.isEmpty() ? "" : whereClause)
+                    + " ORDER BY NgayNhan DESC";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                // Set parameters
+                for (int i = 0; i < params.length; i++) {
+                    ps.setObject(i + 1, params[i]);
+                }
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    model.setRowCount(0); // Xóa dữ liệu cũ
+
+                    int count = 0;
+                    while (rs.next()) {
+                        Object[] row = new Object[7];
+                        row[0] = rs.getInt("MaDon");
+                        row[1] = rs.getString("TenKhachHang");
+                        row[2] = rs.getString("SoDienThoai");
+                        row[3] = rs.getString("TrangThai");
+
+                        // Format date
+                        Date ngayNhan = rs.getDate("NgayNhan");
+                        row[4] = ngayNhan != null ? dateFormat.format(ngayNhan) : "";
+
+                        Date ngayTra = rs.getDate("NgayTra");
+                        row[5] = ngayTra != null ? dateFormat.format(ngayTra) : "";
+
+                        row[6] = rs.getString("DichVuSuDung");
+
+                        model.addRow(row);
+                        count++;
+                    }
+
+                    // Hiển thị số lượng kết quả
+                    updateResultCount(count);
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Lỗi tải dữ liệu: " + e.getMessage(),
+                    "Lỗi Database",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void updateResultCount(int count) {
+        String title = count > 0
+                ? String.format("TÌM KIẾM ĐỠN HÀNG (%d kết quả)", count)
+                : "TÌM KIẾM ĐƠN HÀNG (Không có kết quả)";
+        jLabel1.setText(title);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLamMoi;

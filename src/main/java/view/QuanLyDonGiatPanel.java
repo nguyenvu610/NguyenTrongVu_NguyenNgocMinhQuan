@@ -26,69 +26,115 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
      */
     public QuanLyDonGiatPanel() {
         initComponents();
+        setupTable();
+        setupComboBox();
+        loadData();
+        addTableClickEvent();
+    }
 
+    private void setupTable() {
         model = (DefaultTableModel) tblDonHang.getModel();
+        // SỬA LỖI: Đặt tên cột bằng tiếng Việt đúng
         model.setColumnIdentifiers(new String[]{
             "Mã Đơn", "Tên Khách Hàng", "Ngày Nhận", "Ngày Trả", "Trạng Thái"
         });
+    }
 
-        cboTrangThai = new javax.swing.JComboBox<>();
-        cboTrangThai.setFont(new java.awt.Font("Arial", 0, 14));
-        cboTrangThai.setModel(new javax.swing.DefaultComboBoxModel<>(
-                new String[]{"Chờ nhận", "Đang giặt", "Hoàn thành", "Đã giao"}
-        ));
+    private void setupComboBox() {
+        // SỬA LỖI: Khởi tạo ComboBox với dữ liệu đúng
+        cboTrangThai.removeAllItems();
+        cboTrangThai.addItem("Chờ xử lý");
+        cboTrangThai.addItem("Đang giặt");
+        cboTrangThai.addItem("Hoàn thành");
+        cboTrangThai.addItem("Đã giao");
         cboTrangThai.setSelectedIndex(0);
-
-        loadData();
-        addTableClickEvent();
     }
 
     private void loadData() {
         model.setRowCount(0);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-        for (DonGiat dg : donGiatDAO.getAll()) {
-            model.addRow(new Object[]{
-                dg.getMaDon(),
-                dg.getTenKhachHang(),
-                dg.getNgayNhan() != null ? sdf.format(dg.getNgayNhan()) : "",
-                dg.getNgayTra() != null ? sdf.format(dg.getNgayTra()) : "",
-                dg.getTrangThai()
-            });
+        try {
+            for (DonGiat dg : donGiatDAO.getAll()) {
+                model.addRow(new Object[]{
+                    dg.getMaDon(),
+                    dg.getTenKhachHang(),
+                    dg.getNgayNhan() != null ? sdf.format(dg.getNgayNhan()) : "",
+                    dg.getNgayTra() != null ? sdf.format(dg.getNgayTra()) : "",
+                    dg.getTrangThai()
+                });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 
     private void addTableClickEvent() {
         tblDonHang.getSelectionModel().addListSelectionListener(e -> {
-            int selectedRow = tblDonHang.getSelectedRow();
-            if (selectedRow != -1) {
-                try {
-                    txtKhachHang.setText(model.getValueAt(selectedRow, 1).toString());
-
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    String ngayNhanStr = model.getValueAt(selectedRow, 2).toString();
-                    String ngayTraStr = model.getValueAt(selectedRow, 3).toString();
-
-                    if (!ngayNhanStr.isEmpty()) {
-                        Date ngayNhan = sdf.parse(ngayNhanStr);
-                        txtNgayNhan.setDate(ngayNhan);
-                    } else {
-                        txtNgayNhan.setDate(null);
-                    }
-
-                    if (!ngayTraStr.isEmpty()) {
-                        Date ngayTra = sdf.parse(ngayTraStr);
-                        txtNgayTra.setDate(ngayTra);
-                    } else {
-                        txtNgayTra.setDate(null);
-                    }
-
-                    cboTrangThai.setSelectedItem(model.getValueAt(selectedRow, 4).toString());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+            if (!e.getValueIsAdjusting()) {
+                fillFormFromTable();
             }
         });
+    }
+
+    private void fillFormFromTable() {
+        int selectedRow = tblDonHang.getSelectedRow();
+        if (selectedRow != -1) {
+            try {
+                txtKhachHang.setText(model.getValueAt(selectedRow, 1).toString());
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String ngayNhanStr = model.getValueAt(selectedRow, 2).toString();
+                String ngayTraStr = model.getValueAt(selectedRow, 3).toString();
+
+                if (!ngayNhanStr.isEmpty()) {
+                    Date ngayNhan = sdf.parse(ngayNhanStr);
+                    txtNgayNhan.setDate(ngayNhan);
+                } else {
+                    txtNgayNhan.setDate(null);
+                }
+
+                if (!ngayTraStr.isEmpty()) {
+                    Date ngayTra = sdf.parse(ngayTraStr);
+                    txtNgayTra.setDate(ngayTra);
+                } else {
+                    txtNgayTra.setDate(null);
+                }
+
+                cboTrangThai.setSelectedItem(model.getValueAt(selectedRow, 4).toString());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi hiển thị dữ liệu: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private boolean validateInput() {
+        if (txtKhachHang.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khách hàng!");
+            txtKhachHang.requestFocus();
+            return false;
+        }
+
+        if (txtNgayNhan.getDate() == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày nhận!");
+            txtNgayNhan.requestFocus();
+            return false;
+        }
+
+        // Kiểm tra ngày trả phải sau ngày nhận
+        if (txtNgayTra.getDate() != null && txtNgayNhan.getDate() != null) {
+            if (txtNgayTra.getDate().before(txtNgayNhan.getDate())) {
+                JOptionPane.showMessageDialog(this, "Ngày trả phải sau ngày nhận!");
+                txtNgayTra.requestFocus();
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -304,27 +350,32 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnThemDGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemDGActionPerformed
+        if (!validateInput()) {
+            return;
+        }
+
         try {
             String tenKH = txtKhachHang.getText().trim();
             Date ngayNhan = txtNgayNhan.getDate();
             Date ngayTra = txtNgayTra.getDate();
             String trangThai = cboTrangThai.getSelectedItem().toString();
 
-            if (tenKH.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khách hàng!");
-                return;
-            }
-
+            // Tạo đối tượng DonGiat với constructor java.util.Date
             DonGiat dg = new DonGiat(0, tenKH, ngayNhan, ngayTra, trangThai);
+
             if (donGiatDAO.insert(dg)) {
-                JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                JOptionPane.showMessageDialog(this, "Thêm thành công!",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 loadData();
                 lamMoiForm();
             } else {
-                JOptionPane.showMessageDialog(this, "Thêm thất bại!");
+                JOptionPane.showMessageDialog(this, "Thêm thất bại!",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }//GEN-LAST:event_btnThemDGActionPerformed
 
@@ -353,7 +404,12 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
     private void btnSuaDGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaDGActionPerformed
         int selectedRow = tblDonHang.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Chọn một đơn để sửa!");
+            JOptionPane.showMessageDialog(this, "Chọn một đơn để sửa!",
+                    "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!validateInput()) {
             return;
         }
 
@@ -365,15 +421,20 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
             String trangThai = cboTrangThai.getSelectedItem().toString();
 
             DonGiat dg = new DonGiat(maDon, tenKH, ngayNhan, ngayTra, trangThai);
+
             if (donGiatDAO.update(dg)) {
-                JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công!",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 loadData();
                 lamMoiForm();
             } else {
-                JOptionPane.showMessageDialog(this, "Cập nhật thất bại!");
+                JOptionPane.showMessageDialog(this, "Cập nhật thất bại!",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }//GEN-LAST:event_btnSuaDGActionPerformed
 
