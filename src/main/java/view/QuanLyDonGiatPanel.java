@@ -34,14 +34,13 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
 
     private void setupTable() {
         model = (DefaultTableModel) tblDonHang.getModel();
-        // SỬA LỖI: Đặt tên cột bằng tiếng Việt đúng
         model.setColumnIdentifiers(new String[]{
             "Mã Đơn", "Tên Khách Hàng", "Ngày Nhận", "Ngày Trả", "Trạng Thái"
         });
     }
 
     private void setupComboBox() {
-        // SỬA LỖI: Khởi tạo ComboBox với dữ liệu đúng
+        
         cboTrangThai.removeAllItems();
         cboTrangThai.addItem("Chờ xử lý");
         cboTrangThai.addItem("Đang giặt");
