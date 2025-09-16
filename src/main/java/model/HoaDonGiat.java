@@ -5,6 +5,7 @@
 package model;
 
 import java.sql.Date;
+
 /**
  *
  * @author Tai Smart PC
@@ -12,19 +13,27 @@ import java.sql.Date;
 public class HoaDonGiat {
 
     private int maHoaDon;
-    private int maKhachHang;
+    private String tenKhachHang;
     private String trangThai;
     private double tongTien;
 
-    public HoaDonGiat(int maKH, String trangThai, double tongTien) {
-        this.maKhachHang = maKH;
+    // Constructor mặc định
+    public HoaDonGiat() {
+    }
+
+    // Constructor đầy đủ với ID (cho việc load từ database)
+    public HoaDonGiat(int maHoaDon, String tenKhachHang, String trangThai, double tongTien) {
+        this.maHoaDon = maHoaDon;
+        this.tenKhachHang = tenKhachHang;
         this.trangThai = trangThai;
         this.tongTien = tongTien;
     }
 
-    public HoaDonGiat(int maHD, int maKH, String trangThai, double tongTien) {
-        this(maKH, trangThai, tongTien);
-        this.maHoaDon = maHD;
+    // Constructor không có ID (cho việc thêm mới)
+    public HoaDonGiat(String tenKhachHang, String trangThai, double tongTien) {
+        this.tenKhachHang = tenKhachHang;
+        this.trangThai = trangThai;
+        this.tongTien = tongTien;
     }
 
     // Getter & Setter
@@ -36,12 +45,12 @@ public class HoaDonGiat {
         this.maHoaDon = maHoaDon;
     }
 
-    public int getMaKhachHang() {
-        return maKhachHang;
+    public String getTenKhachHang() {
+        return tenKhachHang;
     }
 
-    public void setMaKhachHang(int maKhachHang) {
-        this.maKhachHang = maKhachHang;
+    public void setTenKhachHang(String tenKhachHang) {
+        this.tenKhachHang = tenKhachHang;
     }
 
     public String getTrangThai() {
@@ -58,5 +67,15 @@ public class HoaDonGiat {
 
     public void setTongTien(double tongTien) {
         this.tongTien = tongTien;
+    }
+
+    @Override
+    public String toString() {
+        return "HoaDonGiat{"
+                + "maHoaDon=" + maHoaDon
+                + ", tenKhachHang='" + tenKhachHang + '\''
+                + ", trangThai='" + trangThai + '\''
+                + ", tongTien=" + tongTien
+                + '}';
     }
 }
