@@ -13,7 +13,7 @@ import java.sql.Date;
 public class HoaDonGiat {
 
     private int maHoaDon;
-    private String tenKhachHang;
+    private String tenKhachHang;  
     private String trangThai;
     private double tongTien;
 
@@ -21,7 +21,7 @@ public class HoaDonGiat {
     public HoaDonGiat() {
     }
 
-    // Constructor đầy đủ với ID (cho việc load từ database)
+    // Constructor đầy đủ (từ view có JOIN)
     public HoaDonGiat(int maHoaDon, String tenKhachHang, String trangThai, double tongTien) {
         this.maHoaDon = maHoaDon;
         this.tenKhachHang = tenKhachHang;
@@ -71,11 +71,11 @@ public class HoaDonGiat {
 
     @Override
     public String toString() {
-        return "HoaDonGiat{"
-                + "maHoaDon=" + maHoaDon
-                + ", tenKhachHang='" + tenKhachHang + '\''
-                + ", trangThai='" + trangThai + '\''
-                + ", tongTien=" + tongTien
-                + '}';
+        return "HoaDonGiat{" +
+                "maHoaDon=" + maHoaDon +
+                ", tenKhachHang='" + tenKhachHang + '\'' +
+                ", trangThai='" + trangThai + '\'' +
+                ", tongTien=" + tongTien +
+                '}';
     }
 }

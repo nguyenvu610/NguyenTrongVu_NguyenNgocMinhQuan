@@ -33,9 +33,9 @@ public class QuanLyHoaDonPanel extends javax.swing.JPanel {
     private void setupComboBox() {
         // Thiết lập combo box trạng thái
         cboTrangThai.removeAllItems();
-        cboTrangThai.addItem("Chưa giặt");
-        cboTrangThai.addItem("Đang giặt");
-        cboTrangThai.addItem("Đã xong");
+        cboTrangThai.addItem("Chưa thanh toán");
+        cboTrangThai.addItem("Đã thanh toán");
+        cboTrangThai.addItem("Đã hủy");
         cboTrangThai.setSelectedIndex(0);
     }
 
