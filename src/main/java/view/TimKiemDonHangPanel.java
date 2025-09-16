@@ -26,11 +26,11 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
      * Creates new form TimKiemDonHangPanel
      */
     public TimKiemDonHangPanel() {
-        initComponents();
-        setupTable();
-        setupComboBox();
-        loadAllData();
-        setupTableClickEvent();
+        initComponents();//khởi tạo giao diện các thành phần trên form
+        setupTable();//tạo và cấu hình bảng kết quả tìm kiếm đơn hàng
+        setupComboBox();//đổ dự liệu cho combobox
+        loadAllData();//nạp toàn bộ dữ liệu đơn hàng từ CSDL vào bảng
+        setupTableClickEvent();//thêm sự kiện khi click chọn dòng trong bảng để hiện thị chi tiết lên form
     }
 
     /**
@@ -217,6 +217,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+    //tạo và cấu hình bảng kết quả tìm kiếm đơn hàng
     private void setupTable() {
         model = new DefaultTableModel(new String[]{
             "Mã Đơn", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái",
@@ -239,6 +240,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
         tblTraCuu.getColumnModel().getColumn(6).setPreferredWidth(200); // Dịch Vụ
     }
 
+    //đổ dự liệu cho combobox
     private void setupComboBox() {
         cboTrangThai.removeAllItems();
         cboTrangThai.addItem("Tất cả");
@@ -249,6 +251,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
         cboTrangThai.setSelectedIndex(0);
     }
 
+    //thêm sự kiện khi click chọn dòng trong bảng để hiện thị chi tiết lên form
     private void setupTableClickEvent() {
         tblTraCuu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -259,6 +262,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
         });
     }
 
+    //mở một cửa sổ hiện thị chi tiết 
     private void showDetailDialog() {
         int selectedRow = tblTraCuu.getSelectedRow();
         if (selectedRow == -1) {
@@ -361,6 +365,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tblTraCuuMouseClicked
 
+    //làm trắng form nhập liệu
     private void clearForm() {
         txtHoaDon.setText("");
         txtSDT.setText("");
@@ -369,6 +374,7 @@ public class TimKiemDonHangPanel extends javax.swing.JPanel {
         tblTraCuu.clearSelection();
     }
 
+    //hiện dự liệu từ CSDL lên bảng
     private void loadAllData() {
         loadData("", new Object[0]);
     }

@@ -24,10 +24,10 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
      * Creates new form QuanLyKhachHangPanel
      */
     public QuanLyKhachHangPanel() {
-        initComponents();
-        model = (DefaultTableModel) tblKhachHang.getModel();
-        loadData();
-        addEventHandlers();
+        initComponents();//khởi tạo giao diện, các thành phần trên form
+        model = (DefaultTableModel) tblKhachHang.getModel();//lấy mô hình dự liệu của bảng khách hàng để thao tác thêm , sửa ,xoá
+        loadData();//nạp dự liệu KHACH HANG từ CSDL lên bảng
+        addEventHandlers();//thêm sự kiện nút chọn dòng
     }
 
     /**
@@ -219,6 +219,7 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    //thêm sự kiện nút chọn dòng
     private void addEventHandlers() {
         btnThem.addActionListener(e -> themKhachHang());
         btnSua.addActionListener(e -> suaKhachHang());
@@ -308,6 +309,7 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_tblKhachHangFocusGained
 
+    //lấy dữ liệu từ CSDL để hiện thị lên form
     private void loadData() {
         DefaultTableModel model = (DefaultTableModel) tblKhachHang.getModel();
         model.setRowCount(0);
@@ -322,6 +324,7 @@ public class QuanLyKhachHangPanel extends javax.swing.JPanel {
         }
     }
 
+    //Xoá trắng dữ liệu trên form nhập liệu
     private void clearForm() {
         txtHoTen.setText("");
         txtSDT.setText("");

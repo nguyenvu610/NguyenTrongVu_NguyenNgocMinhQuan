@@ -24,11 +24,11 @@ public class QuanLyDichVuPanel extends javax.swing.JPanel {
      * Creates new form QuanLyDichVuPanel
      */
     public QuanLyDichVuPanel() {
-        initComponents();
-        initTable();
-        loadData();
-        loadComboBoxDichVu();
-        addComboBoxEvent();
+        initComponents();//khởi tạo giao diện
+        initTable();//tao và cấu hình bảng dịch vụ
+        loadData();//nhập dự dự liệu dịch vụ vào bảng
+        loadComboBoxDichVu();//đổ dự liệu vào bảng combobox
+        addComboBoxEvent();//thêm sự kiện khi chọn combobox
     }
 
     /**
@@ -224,6 +224,7 @@ public class QuanLyDichVuPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    //đổ dự liệu vào bảng combobox
     private void loadComboBoxDichVu() {
         cboMaDichVu.removeAllItems(); // Xóa dữ liệu cũ
         List<DichVuGiat> list = dao.getAll();
@@ -233,6 +234,7 @@ public class QuanLyDichVuPanel extends javax.swing.JPanel {
         }
     }
 
+    //thêm sự kiện khi chọn combobox
     private void addComboBoxEvent() {
         cboMaDichVu.addActionListener(e -> {
             int index = cboMaDichVu.getSelectedIndex();
@@ -245,11 +247,13 @@ public class QuanLyDichVuPanel extends javax.swing.JPanel {
         });
     }
 
+    //tao và cấu hình bảng dịch vụ
     private void initTable() {
         model = new DefaultTableModel(new Object[]{"Mã DV", "Tên DV", "Giá", "Đơn vị"}, 0);
         tblDichVu.setModel(model);
     }
 
+    //nhập dự dự liệu dịch vụ vào bảng
     private void loadData() {
         model.setRowCount(0);
         List<DichVuGiat> list = dao.getAll();
@@ -263,6 +267,7 @@ public class QuanLyDichVuPanel extends javax.swing.JPanel {
         }
     }
 
+    //Xoá trắng toàn bộ dữ liệu trên from
     private void clearForm() {
         cboMaDichVu.setSelectedIndex(-1);
         txtTenDichVu.setText("");

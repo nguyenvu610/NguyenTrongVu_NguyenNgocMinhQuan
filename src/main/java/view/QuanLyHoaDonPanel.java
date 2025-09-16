@@ -24,12 +24,13 @@ public class QuanLyHoaDonPanel extends javax.swing.JPanel {
      * Creates new form QuanLyHoaDonPanel
      */
     public QuanLyHoaDonPanel() {
-        initComponents();
-        setupComboBox();
-        loadDataToTable();
-        addTableClickEvent();
+        initComponents();//khởi tạo giao diện , các thành phần trên from
+        setupComboBox();//tạo và nạp dữ liệu vào combobox
+        loadDataToTable();//lấy dự liệu từ CSDL hiển thị lên bảng
+        addTableClickEvent();//click vào dòng trong bảng để hiện thị trên form
     }
 
+    //tạo và nạp dữ liệu vào combobox
     private void setupComboBox() {
         // Thiết lập combo box trạng thái
         cboTrangThai.removeAllItems();
@@ -39,6 +40,7 @@ public class QuanLyHoaDonPanel extends javax.swing.JPanel {
         cboTrangThai.setSelectedIndex(0);
     }
 
+    //lấy dự liệu từ CSDL hiển thị lên bảng
     private void loadDataToTable() {
         model = new DefaultTableModel(
                 new String[]{"Mã HĐ", "Tên KH", "Trạng Thái", "Tổng Tiền"}, 0
@@ -62,6 +64,7 @@ public class QuanLyHoaDonPanel extends javax.swing.JPanel {
         tblHoaDon.setModel(model);
     }
 
+    //click vào dòng trong bảng để hiện thị trên form
     private void addTableClickEvent() {
         tblHoaDon.getSelectionModel().addListSelectionListener(e -> {
             int row = tblHoaDon.getSelectedRow();
@@ -74,6 +77,7 @@ public class QuanLyHoaDonPanel extends javax.swing.JPanel {
         });
     }
 
+    //Xoá trắng dữ liệu hiện thị trên form
     private void lamMoiForm() {
         txtHoaDon.setText("");
         txtKhachHang.setText("");

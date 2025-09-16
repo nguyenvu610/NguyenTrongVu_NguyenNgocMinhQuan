@@ -25,13 +25,14 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
      * Creates new form QuanLyDonGiatPanel
      */
     public QuanLyDonGiatPanel() {
-        initComponents();
-        setupTable();
-        setupComboBox();
-        loadData();
-        addTableClickEvent();
+        initComponents();// Khởi tạo giao diện ,vẽ from
+        setupTable();//tạo cột ,cột,định dạng JTable
+        setupComboBox();//đổ dự liệu cho combobox
+        loadData();//lấy dữ liệu từ CSDL hiển lên bảng
+        addTableClickEvent();//thêm sự kiện click vào bảng để xử lý
     }
 
+    //tạo cột ,cột,định dạng JTable
     private void setupTable() {
         model = (DefaultTableModel) tblDonHang.getModel();
         model.setColumnIdentifiers(new String[]{
@@ -39,6 +40,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         });
     }
 
+    //đổ dự liệu cho combobox
     private void setupComboBox() {
         
         cboTrangThai.removeAllItems();
@@ -49,6 +51,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         cboTrangThai.setSelectedIndex(0);
     }
 
+    //lấy dữ liệu từ CSDL hiển lên bảng
     private void loadData() {
         model.setRowCount(0);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -70,6 +73,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         }
     }
 
+    //thêm sự kiện click vào bảng để xử lý
     private void addTableClickEvent() {
         tblDonHang.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -78,6 +82,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         });
     }
 
+    //dùng để lấy dự liệu từ dòng được chọn trong bảng và đổ lên vào các ô nhập liệu form
     private void fillFormFromTable() {
         int selectedRow = tblDonHang.getSelectedRow();
         if (selectedRow != -1) {
@@ -111,6 +116,7 @@ public class QuanLyDonGiatPanel extends javax.swing.JPanel {
         }
     }
 
+    //kiểm tra dữ liệu người dùng nhập vào trước khi lưu hoặc xử lý
     private boolean validateInput() {
         if (txtKhachHang.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khách hàng!");
